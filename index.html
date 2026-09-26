@@ -6,21 +6,22 @@
 <meta name="description" content="Fresh, filling food from 5AM in Boston. Signature Giants, Build Your Own, classics and meal deals. Good Food. Brighter Days.">
 <meta name="theme-color" content="#173b2d">
 <meta property="og:title" content="Fresh & Ready by Dori | Boston">
-<meta property="og:description" content="Good Food. Brighter Days. Fresh, filling food from 5AM, Signature Giants and Build Your Own in Boston, Lincolnshire.">
+<meta property="og:description" content="Good Food. Brighter Days. Fresh, filling food from 5AM, Signature Giants and Build Your Own in <span data-business="address2">Boston, Lincolnshire</span>.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://freshandreadybydori.co.uk/">
 <link rel="canonical" href="https://freshandreadybydori.co.uk/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script src="site-data.js"></script>
 <script type="application/ld+json">
 {
  "@context":"https://schema.org",
  "@type":"Restaurant",
  "name":"Fresh & Ready by Dori",
  "url":"https://freshandreadybydori.co.uk/",
- "email":"freshandreadybydori@gmail.com",
+ "email":"<span data-business="email">freshandreadybydori@gmail.com</span>",
  "priceRange":"£",
  "servesCuisine":["Breakfast","Bakery","Deli","Takeaway"],
- "address":{"@type":"PostalAddress","streetAddress":"132 West Street","addressLocality":"Boston","addressRegion":"Lincolnshire","addressCountry":"GB"},
+ "address":{"@type":"PostalAddress","streetAddress":"<span data-business="address1">132 West Street</span>","addressLocality":"Boston","addressRegion":"Lincolnshire","addressCountry":"GB"},
  "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"05:00","closes":"17:00"}],
  "menu":"https://freshandreadybydori.co.uk/#menu"
 }
@@ -49,7 +50,7 @@
     <div class="actions"><a class="btn gold" href="#menu" data-i="viewMenu">View the menu</a><a class="btn ghost" href="#build" data-i="buildBtn">Build yours</a></div>
     <p class="micro">BIG FOOD • BUILD YOUR OWN • GREAT VALUE</p>
   </div>
-  <div class="heroVisual foodScene" aria-label="Fresh & Ready food photography placeholder">
+  <div class="heroVisual foodScene" data-photo="hero" aria-label="Fresh & Ready food photography placeholder">
     <div class="sceneBadge">FRESH & READY<br><small>REAL FOOD PHOTOS COMING SOON</small></div>
     <div class="plate plate1"><span>GIANT<br>DONUT</span></div>
     <div class="plate plate2"><span>BREAKFAST<br>BEAST</span></div>
@@ -68,13 +69,13 @@
  <p class="intro" data-i="menuIntro">From oversized Signature Giants to familiar bakery favourites and a completely customisable meal.</p>
  <div class="cards">
   <article><h3>Signature Giants</h3><p class="muted">Intentionally oversized.</p>
-   <ul><li>English Breakfast Giant Burger <b>£9.99</b></li><li>Giant Baked Donut <b>£3.99</b></li><li>Giant Chocolate Chunky Cookie <b>£3.99</b></li><li>Giant Vanilla & Caramel Cookie <b>£3.99</b></li><li>Giant Soft Pretzel <b>£3.49</b></li><li>Giant Sausage Roll <b>£4.49</b></li><li>Giant Crêpe <b>£3.99</b></li></ul>
+   <ul><li>English Breakfast Giant Burger <b data-price="English Breakfast Giant Burger">£9.99</b></li><li>Giant Baked Donut <b data-price="Giant Baked Donut">£3.99</b></li><li>Giant Chocolate Chunky Cookie <b data-price="Giant Chocolate Chunky Cookie">£3.99</b></li><li>Giant Vanilla & Caramel Cookie <b data-price="Giant Vanilla & Caramel Cookie">£3.99</b></li><li>Giant Soft Pretzel <b data-price="Giant Soft Pretzel">£3.49</b></li><li>Giant Sausage Roll <b data-price="Giant Sausage Roll">£4.49</b></li><li>Giant Crêpe <b data-price="Giant Crêpe">£3.99</b></li></ul>
   </article>
   <article><h3>Fresh & Ready Classics</h3><p class="muted">Comfort food, ready for the day.</p>
-   <ul><li>Apple Pie <b>£3.49</b></li><li>Cheese Pie <b>£3.99</b></li><li>Baked Meat Langoș <b>£4.49</b></li><li>Salam de Biscuiți <b>£2.99</b></li><li>House Cake / Chec <b>£2.49</b></li><li>Amandină <b>£3.99</b></li><li>Căbănuță <b>£3.99</b></li></ul>
+   <ul><li>Apple Pie <b data-price="Apple Pie">£3.49</b></li><li>Cheese Pie <b data-price="Cheese Pie">£3.99</b></li><li>Baked Meat Langoș <b data-price="Baked Meat Langoș">£4.49</b></li><li>Salam de Biscuiți <b data-price="Salam de Biscuiți">£2.99</b></li><li>House Cake / Chec <b data-price="House Cake / Chec">£2.49</b></li><li>Amandină <b data-price="Amandină">£3.99</b></li><li>Căbănuță <b data-price="Căbănuță">£3.99</b></li></ul>
   </article>
   <article><h3>Meal Deals</h3><p class="muted">More value, one easy order.</p>
-   <ul><li>Giant Breakfast Deal <b>£12.99</b></li><li>Build Your Own Combo <b>£9.99</b></li><li>Sweet Giant Deal <b>£5.49</b></li><li>Giant Crêpe Deal <b>£5.99</b></li></ul>
+   <ul><li>Giant Breakfast Deal <b data-price="Giant Breakfast Deal">£12.99</b></li><li>Build Your Own Combo <b data-price="Build Your Own Combo">£9.99</b></li><li>Sweet Giant Deal <b data-price="Sweet Giant Deal">£5.49</b></li><li>Giant Crêpe Deal <b data-price="Giant Crêpe Deal">£5.99</b></li></ul>
    <p class="note">Full ingredient and allergen information will be available before opening.</p>
   </article>
  </div>
@@ -90,7 +91,7 @@
 </section>
 
 <section id="build" class="section dark">
- <p class="eyebrow">BUILD YOUR OWN • £6.99</p><h2 data-i="buildTitle">Your breakfast. Your lunch. Your rules.</h2>
+ <p class="eyebrow">BUILD YOUR OWN • <span data-price="Build Your Own">£6.99</span></p><h2 data-i="buildTitle">Your breakfast. Your lunch. Your rules.</h2>
  <div class="steps">
   <div><span>01</span><h3>Pick a base</h3><p>COB • BAGUETTE • PANINI • CRÊPE</p></div>
   <div><span>02</span><h3>Pick a main</h3><p>House Beef Patty • House Chicken Patty • Sausage • Crispy Chicken • Ham</p></div>
@@ -141,11 +142,12 @@
 </section>
 
 <section id="visit" class="section visit">
- <div><p class="eyebrow">FIND US</p><h2>132 West Street<br>Boston, Lincolnshire</h2><a class="mapPlaceholder" href="https://www.google.com/maps/search/?api=1&query=132+West+Street+Boston+Lincolnshire" target="_blank" rel="noopener"><span>132 WEST STREET<br><small>OPEN IN GOOGLE MAPS ↗</small></span></a><p><b>Monday–Saturday</b><br>5:00 AM – 5:00 PM</p><p><b>Sunday</b><br>Closed</p></div>
- <div><p class="eyebrow">CONTACT</p><h3>Say hello.</h3><a class="email" href="mailto:freshandreadybydori@gmail.com">freshandreadybydori@gmail.com</a><p class="muted">Opening date coming soon.</p></div>
+ <div><p class="eyebrow">FIND US</p><h2><span data-business="address1">132 West Street</span><br><span data-business="address2">Boston, Lincolnshire</span></h2><a class="mapPlaceholder" href="https://www.google.com/maps/search/?api=1&query=132+West+Street+Boston+Lincolnshire" target="_blank" rel="noopener"><span>132 WEST STREET<br><small>OPEN IN GOOGLE MAPS ↗</small></span></a><p><b>Monday–Saturday</b><br>5:00 AM – 5:00 PM</p><p><b>Sunday</b><br>Closed</p></div>
+ <div><p class="eyebrow">CONTACT</p><h3>Say hello.</h3><a class="email" href="mailto:<span data-business="email">freshandreadybydori@gmail.com</span>"><span data-business="email">freshandreadybydori@gmail.com</span></a><p class="muted">Opening date coming soon.</p></div>
 </section>
 </main>
 
 <footer><div class="brand footerBrand">Fresh&Ready <small>by Dori</small></div><p>Good Food. Brighter Days.</p><p>© <span id="year"></span> Fresh & Ready by Dori • Dorina Food Group Ltd<br><small>freshandreadybydori.co.uk</small></p></footer>
+<script src="content-runtime.js"></script>
 <script src="script.js"></script>
 </body></html>

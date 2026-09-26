@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fresh & Ready Admin</title><link rel="stylesheet" href="styles.css"><style>
+.admin{max-width:1050px;margin:auto;padding:45px 6vw}.admin h1{font:400 52px Georgia,serif}.panel{background:#fff;padding:24px;margin:18px 0;border:1px solid #ddd1bd;border-radius:16px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.field label{display:block;font-weight:800;font-size:12px;margin-bottom:5px}.field input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cfc5b5;border-radius:8px}
+.save{background:#173b2d;color:#fff;border:0;padding:15px 22px;font-weight:900;border-radius:8px}.noteAdmin{background:#efe2c9;padding:16px;border-radius:10px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.admin h1{font-size:40px}}</style></head><body>
+<main class="admin"><p class="eyebrow">FRESH & READY BY DORI</p><h1>Website Admin</h1>
+<p class="noteAdmin"><b>How it works:</b> change the fields below, then tap <b>Download updated site-data.js</b>. Replace the old <code>site-data.js</code> in GitHub with the downloaded file. Cloudflare will publish the changes automatically. No design code needs editing.</p>
+<div class="panel"><h2>Business details</h2><div class="grid" id="business"></div></div>
+<div class="panel"><h2>Opening hours</h2><div class="grid" id="hours"></div></div>
+<div class="panel"><h2>Menu prices</h2><div class="grid" id="prices"></div></div>
+<div class="panel"><h2>Photos</h2><p>Enter an image path such as <code>assets/donut.jpg</code> after uploading that image to the GitHub <code>assets</code> folder.</p><div class="grid" id="photos"></div></div>
+<button class="save" id="download">Download updated site-data.js</button>
+</main><script src="site-data.js"></script><script>
+const d=JSON.parse(JSON.stringify(window.SITE_DATA));
+function field(parent,label,value,path){let w=document.createElement("div");w.className="field";let l=document.createElement("label");l.textContent=label;let i=document.createElement("input");i.value=value||"";i.oninput=()=>{let o=d;for(let x=0;x<path.length-1;x++)o=o[path[x]];o[path.at(-1)]=i.value};w.append(l,i);parent.append(w)}
+const b=document.getElementById("business");["address1","address2","email"].forEach(k=>field(b,k,d.business[k],["business",k]));
+const h=document.getElementById("hours");Object.keys(d.business.hours).forEach(k=>field(h,k,d.business.hours[k],["business","hours",k]));
+const p=document.getElementById("prices");Object.keys(d.prices).forEach(k=>field(p,k,"£"+d.prices[k],["prices",k]));
+p.querySelectorAll("input").forEach(i=>i.oninput=((orig=>e=>{let key=e.target.previousSibling.textContent;d.prices[key]=e.target.value.replace("£","").trim()})(i.oninput)));
+const ph=document.getElementById("photos");Object.keys(d.photos).forEach(k=>field(ph,k,d.photos[k],["photos",k]));
+document.getElementById("download").onclick=()=>{let blob=new Blob(["window.SITE_DATA="+JSON.stringify(d,null,2)+";\\n"],{type:"text/javascript"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="site-data.js";a.click();URL.revokeObjectURL(a.href)};
+</script></body></html>
