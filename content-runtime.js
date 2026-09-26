@@ -1,7 +1,7 @@
 (async function(){
  let d=window.SITE_DATA||{};
  const preview=new URLSearchParams(location.search).get('preview')==='1';
- if(preview){try{d=JSON.parse(sessionStorage.getItem('fr_preview'))||d}catch(e){}}
+ if(preview){try{d=JSON.parse(localStorage.getItem('fr_preview'))||JSON.parse(sessionStorage.getItem('fr_preview'))||d}catch(e){}}
  else{try{const r=await fetch('/api/site-data',{cache:'no-store'});if(r.ok)d=await r.json()}catch(e){}}
  window.LIVE_SITE_DATA=d;
  // V7.1 theme controls.
@@ -32,7 +32,7 @@
  // V7 hero image.
  let hv=q('.heroVisual');if(hv&&d.hero?.image){hv.innerHTML=`<img class="heroCmsImage" src="${escapeAttr(d.hero.image)}" alt="${escapeAttr(d.hero.alt||'Fresh & Ready by Dori')}" loading="eager">`;hv.classList.add('hasCmsImage');hv.style.setProperty('--hero-position',d.hero.position||'center');}
  // V7 Careers.
- let cs=q('#careers');if(cs){txt('#careers>.eyebrow',t.careersEyebrow||'CAREERS');txt('#careers>h2',t.careersTitle||'Build brighter days with us.');txt('#careers>.intro',t.careersIntro||'');let list=q('[data-careers-list]'),jobs=Array.isArray(d.careers?.jobs)?d.careers.jobs:[],openJobs=jobs.filter(j=>j&&j.visible===true&&['open','closing-soon'].includes(String(j.status||'').toLowerCase()));if(d.careers?.enabled===false){cs.style.display='none'}else if(list){list.innerHTML=openJobs.map(j=>`<article class="careerCard"><span class="careerStatus">${escapeHtml(j.status==='closing-soon'?'Closing soon':'Open')}</span><p class="eyebrow">${escapeHtml(j.department||'CAREERS')}</p><h3>${escapeHtml(j.title||'Vacancy')}</h3><p class="careerMeta">${escapeHtml([j.location,j.employmentType,j.hours,j.pay].filter(Boolean).join(' • '))}</p><p>${escapeHtml(j.summary||'')}</p><a class="textLink" href="careers.html?job=${encodeURIComponent(j.id)}">View role & apply →</a></article>`).join('')||'<p class="muted">No vacancies are currently published.</p>';}}
+ let cs=q('#careers');if(cs){txt('#careers>.eyebrow',t.careersEyebrow||'CAREERS');txt('#careers>h2',t.careersTitle||'Build brighter days with us.');txt('#careers>.intro',t.careersIntro||'');let list=q('[data-careers-list]'),jobs=Array.isArray(d.careers?.jobs)?d.careers.jobs:[],openJobs=jobs.filter(j=>j&&j.visible!==false&&['open','closing-soon'].includes(String(j.status||'open').trim().toLowerCase()));if(d.careers?.enabled===false){cs.style.display='none'}else if(list){list.innerHTML=openJobs.map(j=>`<article class="careerCard"><span class="careerStatus">${escapeHtml(j.status==='closing-soon'?'Closing soon':'Open')}</span><p class="eyebrow">${escapeHtml(j.department||'CAREERS')}</p><h3>${escapeHtml(j.title||'Vacancy')}</h3><p class="careerMeta">${escapeHtml([j.location,j.employmentType,j.hours,j.pay].filter(Boolean).join(' • '))}</p><p>${escapeHtml(j.summary||'')}</p><a class="textLink" href="careers.html?job=${encodeURIComponent(j.id)}">View role & apply →</a></article>`).join('')||'<p class="muted">No vacancies are currently published.</p>';}}
  // Section visibility + order within main.
  let main=q('main');if(main&&Array.isArray(d.sections))d.sections.forEach(s=>{let e=q(`[data-section="${CSS.escape(s.id)}"]`);if(e){e.style.display=s.visible===false?'none':'';main.appendChild(e)}});
  function escapeHtml(s=''){return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}function escapeAttr(s=''){return escapeHtml(s)}
