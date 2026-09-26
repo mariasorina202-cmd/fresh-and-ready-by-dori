@@ -1,50 +1,81 @@
-const json = (data, status = 200) =>
-  new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store"
-    }
-  });
+const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
+const auth=(request,env)=>env.ADMIN_KEY && request.headers.get("x-admin-key")===env.ADMIN_KEY;
 
-export async function onRequestGet({ env }) {
-  const raw = await env.SITE_CONTENT.get("site-data");
+export async function onRequestGet({request,env}){
+ const u=new URL(request.url), mode=u.searchParams.get("mode")||"live";
 
-  if (!raw) {
-    return json({ error: "No live data saved yet" }, 404);
-  }
+ if(mode==="draft" && !auth(request,env))
+   return json({error:"Unauthorized"},401);
 
-  return new Response(raw, {
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store"
-    }
-  });
+ const raw=await env.SITE_CONTENT.get(
+   mode==="draft" ? "site-data-draft" : "site-data"
+ );
+
+ if(!raw)
+   return json({error:"No data saved yet"},404);
+
+ return new Response(raw,{
+   headers:{
+     "content-type":"application/json; charset=utf-8",
+     "cache-control":"no-store"
+   }
+ });
 }
 
-export async function onRequestPost({ request, env }) {
-  const key = request.headers.get("x-admin-key");
+export async function onRequestPost({request,env}){
+ if(!auth(request,env))
+   return json({error:"Unauthorized"},401);
 
-  if (!env.ADMIN_KEY || key !== env.ADMIN_KEY) {
-    return json({ error: "Unauthorized" }, 401);
-  }
+ let body;
 
-  let data;
+ try{
+   body=await request.json();
+ }catch{
+   return json({error:"Invalid JSON"},400);
+ }
 
-  try {
-    data = await request.json();
-  } catch {
-    return json({ error: "Invalid JSON" }, 400);
-  }
+ const data=body?.data||body;
+ const action=body?.action||"publish";
 
-  if (!data?.business || !data?.prices || !data?.photos) {
-    return json({ error: "Invalid site data" }, 400);
-  }
+ if(
+   !data?.business ||
+   !data?.text ||
+   !Array.isArray(data?.menu) ||
+   !data?.galleries
+ ){
+   return json({error:"Invalid site data"},400);
+ }
 
-  await env.SITE_CONTENT.put("site-data", JSON.stringify(data));
+ if(action==="draft"){
+   await env.SITE_CONTENT.put(
+     "site-data-draft",
+     JSON.stringify(data)
+   );
 
-  return json({
-    ok: true,
-    savedAt: new Date().toISOString()
-  });
+   return json({
+     ok:true,
+     mode:"draft",
+     savedAt:new Date().toISOString()
+   });
+ }
+
+ if(action==="publish"){
+   await env.SITE_CONTENT.put(
+     "site-data",
+     JSON.stringify(data)
+   );
+
+   await env.SITE_CONTENT.put(
+     "site-data-draft",
+     JSON.stringify(data)
+   );
+
+   return json({
+     ok:true,
+     mode:"live",
+     savedAt:new Date().toISOString()
+   });
+ }
+
+ return json({error:"Unknown action"},400);
 }
