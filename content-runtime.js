@@ -6,6 +6,7 @@
  window.LIVE_SITE_DATA=d;
  // V7.1 theme controls.
  const th=d.theme||{};const root=document.documentElement;const themeMap={green:'--green',deep:'--deep',gold:'--gold',silver:'--silver',cream:'--cream',ink:'--ink',white:'--white'};Object.entries(themeMap).forEach(([k,v])=>{if(th[k])root.style.setProperty(v,th[k])});let mt=document.querySelector('meta[name="theme-color"]');if(mt&&th.deep)mt.setAttribute('content',th.deep);
+ if(th.backgroundColor)document.body.style.backgroundColor=th.backgroundColor;if(th.backgroundImage){document.body.style.backgroundImage=`url("${String(th.backgroundImage).replace(/"/g,'%22')}")`;document.body.style.backgroundSize=th.backgroundSize||'cover';document.body.style.backgroundPosition=th.backgroundPosition||'center';document.body.style.backgroundAttachment=th.backgroundAttachment||'scroll';document.body.style.backgroundRepeat=th.backgroundSize==='contain'?'repeat':'no-repeat';}
  const q=s=>document.querySelector(s), qa=s=>[...document.querySelectorAll(s)], txt=(s,v)=>{let e=q(s);if(e&&v!=null)e.textContent=v};
  // Mark major sections so visibility/order can be controlled.
  const map={hero:'.hero',quick:'.quick',menu:'#menu',featured:'.featured',build:'#build',story:'#story',manifesto:'.manifesto',community:'#community',team:'#team',careers:'#careers',delivery:'#delivery',allergens:'#allergens',visit:'#visit'};
