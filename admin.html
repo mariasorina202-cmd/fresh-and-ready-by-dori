@@ -1,209 +1,28 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fresh & Ready Admin</title>
-<link rel="stylesheet" href="styles.css">
-
-<style>
-.admin{max-width:1050px;margin:auto;padding:45px 6vw}
-.admin h1{font:400 52px Georgia,serif}
-.panel{background:#fff;padding:24px;margin:18px 0;border:1px solid #ddd1bd;border-radius:16px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.field label{display:block;font-weight:800;font-size:12px;margin-bottom:5px}
-.field input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cfc5b5;border-radius:8px}
-.save{background:#173b2d;color:#fff;border:0;padding:15px 22px;font-weight:900;border-radius:8px;cursor:pointer}
-.save:disabled{opacity:.6;cursor:not-allowed}
-.noteAdmin{background:#efe2c9;padding:16px;border-radius:10px}
-.adminKey{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cfc5b5;border-radius:8px;margin-top:8px}
-.status{margin-top:14px;font-weight:800}
-@media(max-width:700px){
-.grid{grid-template-columns:1fr}
-.admin h1{font-size:40px}
-}
-</style>
-</head>
-
-<body>
-
-<main class="admin">
-
-<p class="eyebrow">FRESH & READY BY DORI</p>
-<h1>Website Admin</h1>
-
-<p class="noteAdmin">
-<b>Live Admin:</b> update the information below and tap
-<b>Save &amp; Publish</b>. Your changes will be saved directly to the live website.
-</p>
-
-<div class="panel">
-<h2>Admin access</h2>
-<div class="field">
-<label for="adminKey">Admin key</label>
-<input
-class="adminKey"
-id="adminKey"
-type="password"
-autocomplete="current-password"
-placeholder="Enter your private admin key">
-</div>
-</div>
-
-<div class="panel">
-<h2>Business details</h2>
-<div class="grid" id="business"></div>
-</div>
-
-<div class="panel">
-<h2>Opening hours</h2>
-<div class="grid" id="hours"></div>
-</div>
-
-<div class="panel">
-<h2>Menu prices</h2>
-<div class="grid" id="prices"></div>
-</div>
-
-<div class="panel">
-<h2>Photos</h2>
-<p>
-Enter an image path such as <code>assets/donut.jpg</code>
-after uploading that image to the GitHub <code>assets</code> folder.
-</p>
-<div class="grid" id="photos"></div>
-</div>
-
-<button class="save" id="save">Save &amp; Publish</button>
-<div class="status" id="status"></div>
-
-</main>
-
-<script src="site-data.js"></script>
-
-<script>
-let d = JSON.parse(JSON.stringify(window.SITE_DATA || {}));
-
-function field(parent,label,value,path){
-  let w=document.createElement("div");
-  w.className="field";
-
-  let l=document.createElement("label");
-  l.textContent=label;
-
-  let i=document.createElement("input");
-  i.value=value ?? "";
-
-  i.oninput=()=>{
-    let o=d;
-    for(let x=0;x<path.length-1;x++){
-      o=o[path[x]];
-    }
-    o[path.at(-1)]=i.value;
-  };
-
-  w.append(l,i);
-  parent.append(w);
-}
-
-function render(){
-  const b=document.getElementById("business");
-  const h=document.getElementById("hours");
-  const p=document.getElementById("prices");
-  const ph=document.getElementById("photos");
-
-  b.innerHTML="";
-  h.innerHTML="";
-  p.innerHTML="";
-  ph.innerHTML="";
-
-  ["address1","address2","email"].forEach(k=>{
-    field(b,k,d.business?.[k] || "",["business",k]);
-  });
-
-  Object.keys(d.business?.hours || {}).forEach(k=>{
-    field(h,k,d.business.hours[k],["business","hours",k]);
-  });
-
-  Object.keys(d.prices || {}).forEach(k=>{
-    field(p,k,"£"+d.prices[k],["prices",k]);
-  });
-
-  p.querySelectorAll("input").forEach(i=>{
-    i.oninput=e=>{
-      let key=e.target.previousSibling.textContent;
-      d.prices[key]=e.target.value.replace("£","").trim();
-    };
-  });
-
-  Object.keys(d.photos || {}).forEach(k=>{
-    field(ph,k,d.photos[k],["photos",k]);
-  });
-}
-
-async function loadLiveData(){
-  try{
-    const response=await fetch("/api/site-data",{
-      cache:"no-store"
-    });
-
-    if(response.ok){
-      const live=await response.json();
-
-      if(live?.business && live?.prices && live?.photos){
-        d=live;
-        render();
-      }
-    }
-  }catch(error){
-    console.log("Using fallback site-data.js");
-  }
-}
-
-document.getElementById("save").onclick=async()=>{
-  const button=document.getElementById("save");
-  const status=document.getElementById("status");
-  const key=document.getElementById("adminKey").value.trim();
-
-  if(!key){
-    status.textContent="Please enter your Admin key.";
-    return;
-  }
-
-  button.disabled=true;
-  status.textContent="Saving...";
-
-  try{
-    const response=await fetch("/api/site-data",{
-      method:"POST",
-      headers:{
-        "content-type":"application/json",
-        "x-admin-key":key
-      },
-      body:JSON.stringify(d)
-    });
-
-    const result=await response.json().catch(()=>({}));
-
-    if(!response.ok){
-      if(response.status===401){
-        throw new Error("Incorrect Admin key.");
-      }
-
-      throw new Error(result.error || "Unable to save changes.");
-    }
-
-    status.textContent="✓ Saved & published successfully.";
-  }catch(error){
-    status.textContent="Error: "+error.message;
-  }finally{
-    button.disabled=false;
-  }
-};
-
-render();
-loadLiveData();
-</script>
-
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fresh & Ready Control Centre</title><link rel="stylesheet" href="styles.css"><style>
+:root{--green:#173b2d;--cream:#f7f1e5;--gold:#b78b48}.admin{max-width:1180px;margin:auto;padding:28px 4vw 80px}.admin h1{font:400 clamp(38px,7vw,62px) Georgia,serif;margin:.15em 0}.top{position:sticky;top:0;z-index:20;background:rgba(247,241,229,.96);padding:12px 0;border-bottom:1px solid #d9cdbb}.toolbar,.tabs,.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.tabs{margin:22px 0}.tabs button,.btn{border:1px solid #cbbda8;background:#fff;padding:11px 14px;border-radius:10px;font-weight:800}.tabs button.active,.btn.primary{background:var(--green);color:#fff}.btn.gold{background:var(--gold);color:#fff}.btn.danger{color:#8b2424}.panel{background:#fff;padding:20px;margin:14px 0;border:1px solid #ddd1bd;border-radius:16px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field label{display:block;font-weight:800;font-size:12px;margin:0 0 5px}.field input,.field textarea,.field select{width:100%;box-sizing:border-box;padding:11px;border:1px solid #cfc5b5;border-radius:8px;background:#fff}.field textarea{min-height:90px}.item{border:1px solid #e2d8c8;border-radius:12px;padding:14px;margin:10px 0;background:#fffdf9}.itemHead{display:flex;justify-content:space-between;gap:10px;align-items:center}.muted{opacity:.68}.status{font-weight:800}.hidden{display:none!important}.galleryGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}.thumb{border:1px solid #ddd1bd;border-radius:12px;padding:8px}.thumb img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px}.drag{cursor:grab;font-size:18px}.small{font-size:12px}.switch{display:flex;gap:7px;align-items:center}.switch input{width:auto}.warn{background:#fff4d8;border:1px solid #ead19b;padding:12px;border-radius:10px}.previewFrame{width:100%;height:70vh;border:1px solid #ccc;border-radius:12px;background:#fff}@media(max-width:720px){.grid{grid-template-columns:1fr}.toolbar .btn{flex:1}.admin{padding-inline:16px}}
+</style></head><body><main class="admin">
+<div class="top"><p class="eyebrow">FRESH & READY BY DORI</p><h1>Control Centre</h1><div class="toolbar"><input id="adminKey" type="password" placeholder="Private admin key" style="padding:12px;border:1px solid #cfc5b5;border-radius:9px;flex:1;min-width:180px"><button class="btn" id="load">Load</button><button class="btn" id="draft">Save Draft</button><button class="btn gold" id="preview">Preview</button><button class="btn primary" id="publish">Publish Live</button></div><p id="status" class="status">Enter your admin key, then tap Load.</p></div>
+<div class="tabs" id="tabs"></div><div id="view"></div>
+</main><script src="site-data.js"></script><script>
+const defaults=structuredClone(window.SITE_DATA);let d=structuredClone(defaults), current='home';
+function migrate(x){if(!x||x.version!==6)return structuredClone(defaults);return x}const $=s=>document.querySelector(s), view=$('#view'), status=$('#status');
+const tabs=[['home','Home & Text'],['menu','Menu'],['build','Build Your Own'],['photos','Photos & Galleries'],['team','Our Team'],['community','Community'],['sections','Sections'],['business','Business'],['delivery','Delivery']];
+function esc(s=''){return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function inp(label,value,on,area=false,type='text'){return `<div class="field"><label>${esc(label)}</label>${area?`<textarea oninput="${on}">${esc(value)}</textarea>`:`<input type="${type}" value="${esc(value)}" oninput="${on}">`}</div>`}
+function drawTabs(){tabs.forEach(([k,l])=>{let b=document.createElement('button');b.textContent=l;b.className=k===current?'active':'';b.onclick=()=>{current=k;drawTabs();render()};$('#tabs').append(b)})}
+function drawTabsReset(){ $('#tabs').innerHTML='';drawTabs() }
+function render(){if(current==='home')home();if(current==='menu')menu();if(current==='build')build();if(current==='photos')photos();if(current==='team')team();if(current==='community')community();if(current==='sections')sections();if(current==='business')business();if(current==='delivery')delivery()}
+function home(){view.innerHTML=`<div class="panel"><h2>All website text</h2><p class="muted">Edit the public headings, labels and paragraphs here.</p><div class="grid">${Object.entries(d.text).map(([k,v])=>inp(k,v,`d.text['${k}']=this.value`,String(v).length>80)).join('')}</div></div>`}
+function menu(){view.innerHTML=`<div class="panel"><div class="itemHead"><div><h2>Menu categories & products</h2><p class="muted">Rename, add, remove, hide and reorder categories/products.</p></div><button class="btn primary" onclick="addCat()">+ Category</button></div><div id="cats"></div></div>`;let c=$('#cats');d.menu.forEach((cat,ci)=>{let x=document.createElement('div');x.className='item';x.innerHTML=`<div class="itemHead"><h3>${esc(cat.name)}</h3><div class="row"><button class="btn" onclick="moveCat(${ci},-1)">↑</button><button class="btn" onclick="moveCat(${ci},1)">↓</button><button class="btn danger" onclick="delCat(${ci})">Delete</button></div></div><div class="grid">${inp('Category name',cat.name,`d.menu[${ci}].name=this.value`)}${inp('Description',cat.description||'',`d.menu[${ci}].description=this.value`)}<label class="switch"><input type="checkbox" ${cat.visible!==false?'checked':''} onchange="d.menu[${ci}].visible=this.checked"> Visible</label></div><div>${cat.products.map((p,pi)=>`<div class="item"><div class="itemHead"><b>${esc(p.name)}</b><div><button class="btn" onclick="moveProduct(${ci},${pi},-1)">↑</button> <button class="btn" onclick="moveProduct(${ci},${pi},1)">↓</button> <button class="btn danger" onclick="delProduct(${ci},${pi})">Delete</button></div></div><div class="grid">${inp('Product name',p.name,`d.menu[${ci}].products[${pi}].name=this.value`)}${inp('Price £',p.price,`d.menu[${ci}].products[${pi}].price=this.value`)}${inp('Description',p.description||'',`d.menu[${ci}].products[${pi}].description=this.value`,true)}<label class="switch"><input type="checkbox" ${p.visible!==false?'checked':''} onchange="d.menu[${ci}].products[${pi}].visible=this.checked"> Available / visible</label></div></div>`).join('')}</div><button class="btn" onclick="addProduct(${ci})">+ Add product</button>`;c.append(x)})}
+window.addCat=()=>{d.menu.push({id:id(),name:'New category',description:'',visible:true,products:[]});menu()};window.delCat=i=>{if(confirm('Delete this category?')){d.menu.splice(i,1);menu()}};window.moveCat=(i,n)=>{let j=i+n;if(j<0||j>=d.menu.length)return;[d.menu[i],d.menu[j]]=[d.menu[j],d.menu[i]];menu()};window.addProduct=i=>{d.menu[i].products.push({id:id(),name:'New product',description:'',price:'0.00',visible:true});menu()};window.delProduct=(i,j)=>{if(confirm('Delete this product?')){d.menu[i].products.splice(j,1);menu()}};window.moveProduct=(i,j,n)=>{let a=d.menu[i].products,k=j+n;if(k<0||k>=a.length)return;[a[j],a[k]]=[a[k],a[j]];menu()};
+function build(){let b=d.buildYourOwn;view.innerHTML=`<div class="panel"><h2>Build Your Own</h2><div class="grid">${inp('Price £',b.price,`d.buildYourOwn.price=this.value`)}${inp('Bases — one per line',b.bases.join('\n'),`d.buildYourOwn.bases=this.value.split('\\n').filter(Boolean)`,true)}${inp('Mains — one per line',b.mains.join('\n'),`d.buildYourOwn.mains=this.value.split('\\n').filter(Boolean)`,true)}${inp('Included',b.included,`d.buildYourOwn.included=this.value`,true)}${inp('Extras',b.extras,`d.buildYourOwn.extras=this.value`,true)}</div></div>`}
+function photos(){view.innerHTML=`<div class="panel"><h2>Photos & Galleries</h2><p class="warn">Upload directly from your phone. For uploads, Cloudflare needs one R2 bucket bound to this Pages project as <b>SITE_IMAGES</b>. Text/menu publishing continues to work even before that binding is added.</p><div id="gals"></div></div>`;let g=$('#gals');Object.entries(d.galleries).forEach(([key,gal])=>{let box=document.createElement('div');box.className='item';box.innerHTML=`<div class="itemHead"><h3>${esc(gal.label)}</h3><select onchange="d.galleries['${key}'].layout=this.value"><option ${gal.layout==='single'?'selected':''}>single</option><option ${gal.layout==='grid'?'selected':''}>grid</option><option ${gal.layout==='collage'?'selected':''}>collage</option><option ${gal.layout==='slideshow'?'selected':''}>slideshow</option></select></div><p class="small muted">Add as many photos as you want. Reorder them with arrows. Staff photos can be assigned to a team member.</p><input type="file" accept="image/*" multiple onchange="uploadImages('${key}',this.files)"><div class="galleryGrid">${gal.images.map((im,i)=>`<div class="thumb"><img src="${esc(im.url)}"><div class="field"><label>Caption</label><input value="${esc(im.caption||'')}" oninput="d.galleries['${key}'].images[${i}].caption=this.value"></div>${key==='staff'?`<div class="field"><label>Staff member</label><select onchange="d.galleries.staff.images[${i}].owner=this.value"><option value="">Unassigned</option>${d.team.map(t=>`<option value="${t.id}" ${im.owner===t.id?'selected':''}>${esc(t.name)}</option>`).join('')}</select></div>`:''}<div class="row"><button class="btn" onclick="moveImg('${key}',${i},-1)">←</button><button class="btn" onclick="moveImg('${key}',${i},1)">→</button><button class="btn danger" onclick="removeImg('${key}',${i})">Remove</button></div></div>`).join('')}</div></div>`;g.append(box)})}
+window.uploadImages=async(key,files)=>{let admin=$('#adminKey').value;if(!admin)return alert('Enter admin key first');status.textContent='Uploading photos…';for(const f of files){let fd=new FormData();fd.append('file',f);let r=await fetch('/api/images/upload',{method:'POST',headers:{'x-admin-key':admin},body:fd});let o=await r.json();if(!r.ok){status.textContent='Upload failed: '+o.error;return}d.galleries[key].images.push({id:id(),url:o.url,key:o.key,caption:'',owner:''})}status.textContent='Photos uploaded. Save Draft or Publish Live to keep gallery changes.';photos()};window.moveImg=(k,i,n)=>{let a=d.galleries[k].images,j=i+n;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];photos()};window.removeImg=(k,i)=>{d.galleries[k].images.splice(i,1);photos()};
+function team(){view.innerHTML=`<div class="panel"><div class="itemHead"><h2>Our Team</h2><button class="btn primary" onclick="addTeam()">+ Person</button></div>${d.team.map((t,i)=>`<div class="item"><div class="itemHead"><h3>${esc(t.name)}</h3><button class="btn danger" onclick="delTeam(${i})">Delete</button></div><div class="grid">${inp('Name / display title',t.name,`d.team[${i}].name=this.value`)}${inp('Role',t.role,`d.team[${i}].role=this.value`)}${inp('Description',t.description,`d.team[${i}].description=this.value`,true)}<label class="switch"><input type="checkbox" ${t.visible!==false?'checked':''} onchange="d.team[${i}].visible=this.checked"> Visible</label></div></div>`).join('')}</div>`}window.addTeam=()=>{d.team.push({id:id(),name:'New team member',role:'',description:'',visible:true});team()};window.delTeam=i=>{if(confirm('Delete this team member?')){d.team.splice(i,1);team()}};
+function community(){view.innerHTML=`<div class="panel"><h2>Community cards</h2>${d.community.map((x,i)=>`<div class="item grid">${inp('Title',x.title,`d.community[${i}].title=this.value`)}${inp('Text',x.text,`d.community[${i}].text=this.value`,true)}</div>`).join('')}</div>`}
+function sections(){view.innerHTML=`<div class="panel"><h2>Sections</h2><p class="muted">Show/hide and reorder major homepage sections.</p>${d.sections.map((s,i)=>`<div class="item itemHead"><label class="switch"><input type="checkbox" ${s.visible?'checked':''} onchange="d.sections[${i}].visible=this.checked"> <b>${esc(s.label)}</b></label><div><button class="btn" onclick="moveSec(${i},-1)">↑</button> <button class="btn" onclick="moveSec(${i},1)">↓</button></div></div>`).join('')}</div>`}window.moveSec=(i,n)=>{let j=i+n;if(j<0||j>=d.sections.length)return;[d.sections[i],d.sections[j]]=[d.sections[j],d.sections[i]];sections()};
+function business(){view.innerHTML=`<div class="panel"><h2>Business details</h2><div class="grid">${inp('Address line 1',d.business.address1,`d.business.address1=this.value`)}${inp('Address line 2',d.business.address2,`d.business.address2=this.value`)}${inp('Email',d.business.email,`d.business.email=this.value`)}</div><h3>Opening hours</h3><div class="grid">${Object.entries(d.business.hours).map(([k,v])=>inp(k,v,`d.business.hours['${k}']=this.value`)).join('')}</div></div>`}
+function delivery(){let x=d.delivery;view.innerHTML=`<div class="panel"><h2>Delivery</h2><div class="grid">${inp('Uber Eats button label',x.uberLabel,`d.delivery.uberLabel=this.value`)}${inp('Uber Eats URL',x.uberUrl,`d.delivery.uberUrl=this.value`)}<label class="switch"><input type="checkbox" ${x.uberEnabled?'checked':''} onchange="d.delivery.uberEnabled=this.checked"> Uber Eats live</label>${inp('Just Eat button label',x.justEatLabel,`d.delivery.justEatLabel=this.value`)}${inp('Just Eat URL',x.justEatUrl,`d.delivery.justEatUrl=this.value`)}<label class="switch"><input type="checkbox" ${x.justEatEnabled?'checked':''} onchange="d.delivery.justEatEnabled=this.checked"> Just Eat live</label></div></div>`}
+async function api(action){let key=$('#adminKey').value;if(!key){status.textContent='Enter your admin key first.';return}status.textContent=action==='draft'?'Saving draft…':'Publishing…';let r=await fetch('/api/site-data',{method:'POST',headers:{'content-type':'application/json','x-admin-key':key},body:JSON.stringify({action,data:d})}),o=await r.json();status.textContent=r.ok?(action==='draft'?'✓ Draft saved.':'✓ Published live successfully.'):'Error: '+(o.error||r.status)}
+$('#load').onclick=async()=>{let key=$('#adminKey').value;if(!key)return status.textContent='Enter your admin key first.';status.textContent='Loading…';let r=await fetch('/api/site-data?mode=draft',{headers:{'x-admin-key':key},cache:'no-store'});if(!r.ok)r=await fetch('/api/site-data',{cache:'no-store'});if(r.ok){d=migrate(await r.json());status.textContent=d.version===6?'✓ Content loaded.':'V5 content detected; V6 defaults loaded for migration.';render()}else status.textContent='No saved content yet — using V6 defaults.'};$('#draft').onclick=()=>api('draft');$('#publish').onclick=()=>api('publish');$('#preview').onclick=()=>{sessionStorage.setItem('fr_preview',JSON.stringify(d));window.open('/?preview=1','_blank')};drawTabs();render();
+</script></body></html>

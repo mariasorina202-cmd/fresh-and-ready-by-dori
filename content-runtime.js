@@ -1,14 +1,33 @@
-
-(function(){
- const d=window.SITE_DATA||{};
- document.querySelectorAll("[data-price]").forEach(el=>{
-   const k=el.dataset.price;if(d.prices&&d.prices[k]!=null) el.textContent="£"+d.prices[k];
- });
- document.querySelectorAll("[data-business]").forEach(el=>{
-   const k=el.dataset.business;if(d.business&&d.business[k]) el.textContent=d.business[k];
- });
- document.querySelectorAll("[data-photo]").forEach(el=>{
-   const k=el.dataset.photo, u=d.photos&&d.photos[k];
-   if(u){el.style.backgroundImage=`linear-gradient(rgba(20,35,27,.12),rgba(20,35,27,.12)),url("${u}")`;el.style.backgroundSize="cover";el.style.backgroundPosition="center";}
- });
+(async function(){
+ let d=window.SITE_DATA||{};
+ const preview=new URLSearchParams(location.search).get('preview')==='1';
+ if(preview){try{d=JSON.parse(sessionStorage.getItem('fr_preview'))||d}catch(e){}}
+ else{try{const r=await fetch('/api/site-data',{cache:'no-store'});if(r.ok)d=await r.json()}catch(e){}}
+ window.LIVE_SITE_DATA=d;
+ const q=s=>document.querySelector(s), qa=s=>[...document.querySelectorAll(s)], txt=(s,v)=>{let e=q(s);if(e&&v!=null)e.textContent=v};
+ // Mark major sections so visibility/order can be controlled.
+ const map={hero:'.hero',quick:'.quick',menu:'#menu',featured:'.featured',build:'#build',story:'#story',manifesto:'.manifesto',community:'#community',team:'#team',delivery:'#delivery',allergens:'#allergens',visit:'#visit'};
+ Object.entries(map).forEach(([id,sel])=>{let e=q(sel);if(e)e.dataset.section=id});
+ // Editable public text.
+ const t=d.text||{};txt('.announcement',t.announcement);txt('.hero .eyebrow',t.heroEyebrow);let h=q('.hero h1');if(h&&t.heroTitle)h.textContent=t.heroTitle;txt('.hero .lead',t.heroLead);txt('.hero .micro',t.heroMicro);txt('#menu>.eyebrow',t.menuEyebrow);txt('#menu>h2',t.menuTitle);txt('#menu>.intro',t.menuIntro);txt('.featured .eyebrow',t.featuredEyebrow);txt('.featured h2',t.featuredTitle);txt('#build>.eyebrow',`${t.buildEyebrow||'BUILD YOUR OWN'} • £${d.buildYourOwn?.price||'6.99'}`);txt('#build>h2',t.buildTitle);txt('#story .eyebrow',t.storyEyebrow);txt('#story h2',t.storyTitle);if(q('#story .storyText')&&t.storyBody)q('#story .storyText').innerHTML=t.storyBody.split(/\n\s*\n/).map(x=>`<p>${escapeHtml(x)}</p>`).join('');txt('.manifesto p',t.manifesto);txt('#community>.eyebrow',t.communityEyebrow);txt('#community>h2',t.communityTitle);txt('#team>.eyebrow',t.teamEyebrow);txt('#team>h2',t.teamTitle);txt('#delivery .eyebrow',t.deliveryEyebrow);txt('#delivery h2',t.deliveryTitle);txt('#delivery div p:not(.eyebrow)',t.deliveryText);txt('#allergens>.eyebrow',t.allergenEyebrow);txt('#allergens>h2',t.allergenTitle);let ap=q('#allergens>p');if(ap&&t.allergenText)ap.textContent=t.allergenText;txt('#visit>div:first-child .eyebrow',t.findEyebrow);txt('#visit>div:last-child .eyebrow',t.contactEyebrow);txt('#visit>div:last-child h3',t.contactTitle);txt('#visit .muted',t.openingNote);txt('footer>p:nth-of-type(1)',t.footerTagline);
+ // Business details.
+ qa('[data-business]').forEach(el=>{let k=el.dataset.business;if(d.business?.[k])el.textContent=d.business[k]});let visit=q('#visit');if(visit){let ps=visit.querySelectorAll('div:first-child>p');if(ps[1])ps[1].innerHTML=`<b>Monday–Saturday</b><br>${escapeHtml(d.business?.hours?.Monday||'')}<br><br><b>Sunday</b><br>${escapeHtml(d.business?.hours?.Sunday||'Closed')}`;let em=visit.querySelector('.email');if(em){em.textContent=d.business?.email||'';em.href='mailto:'+(d.business?.email||'')}}
+ // Dynamic menu.
+ let cards=q('#menu .cards');if(cards&&Array.isArray(d.menu)){cards.innerHTML=d.menu.filter(c=>c.visible!==false).map(c=>`<article><h3>${escapeHtml(c.name)}</h3><p class="muted">${escapeHtml(c.description||'')}</p><ul>${(c.products||[]).filter(p=>p.visible!==false).map(p=>`<li><span>${escapeHtml(p.name)}</span> <b>£${escapeHtml(p.price)}</b>${p.description?`<small class="productDesc">${escapeHtml(p.description)}</small>`:''}</li>`).join('')}</ul></article>`).join('')}
+ // Build your own.
+ let b=d.buildYourOwn||{},steps=q('#build .steps');if(steps)steps.innerHTML=`<div><span>01</span><h3>Pick a base</h3><p>${(b.bases||[]).map(escapeHtml).join(' • ')}</p></div><div><span>02</span><h3>Pick a main</h3><p>${(b.mains||[]).map(escapeHtml).join(' • ')}</p></div><div><span>03</span><h3>Make it yours</h3><p>${escapeHtml(b.included||'')}</p></div><div><span>04</span><h3>Go extra</h3><p>${escapeHtml(b.extras||'')}</p></div>`;
+ // Community.
+ let cg=q('#community .communityGrid');if(cg&&Array.isArray(d.community))cg.innerHTML=d.community.map(x=>`<article><b>${escapeHtml(x.title)}</b><p>${escapeHtml(x.text)}</p></article>`).join('');
+ // Team and staff images.
+ let tg=q('#team .teamGrid'),staff=d.galleries?.staff?.images||[];if(tg&&Array.isArray(d.team))tg.innerHTML=d.team.filter(x=>x.visible!==false).map(x=>{let ims=staff.filter(im=>im.owner===x.id);return `<article class="person">${renderGallery(ims,d.galleries?.staff?.layout||'single','staffGallery')}<h3>${escapeHtml(x.name)}</h3>${x.role&&x.role!==x.name?`<b>${escapeHtml(x.role)}</b>`:''}<p>${escapeHtml(x.description||'')}</p></article>`}).join('');
+ // Our Story gallery.
+ let story=q('#story');if(story){let old=story.querySelector('.cmsGallery');if(old)old.remove();let g=document.createElement('div');g.className='cmsGallery';g.innerHTML=renderGallery(d.galleries?.ourStory?.images||[],d.galleries?.ourStory?.layout||'collage','storyGallery');story.append(g)}
+ // Product gallery / featured visual area.
+ let fr=q('.featured .featureRail');if(fr&&(d.galleries?.products?.images||[]).length)fr.innerHTML=renderGallery(d.galleries.products.images,d.galleries.products.layout||'grid','productGallery');
+ // Delivery buttons.
+ let db=q('#delivery .deliveryBtns');if(db){let x=d.delivery||{};db.innerHTML=`<${x.uberEnabled&&x.uberUrl?'a':'button'} ${x.uberEnabled&&x.uberUrl?`href="${escapeAttr(x.uberUrl)}" target="_blank" rel="noopener"`:'disabled'}>${escapeHtml(x.uberLabel||'UBER EATS • COMING SOON')}</${x.uberEnabled&&x.uberUrl?'a':'button'}><${x.justEatEnabled&&x.justEatUrl?'a':'button'} ${x.justEatEnabled&&x.justEatUrl?`href="${escapeAttr(x.justEatUrl)}" target="_blank" rel="noopener"`:'disabled'}>${escapeHtml(x.justEatLabel||'JUST EAT • COMING SOON')}</${x.justEatEnabled&&x.justEatUrl?'a':'button'}>`}
+ // Section visibility + order within main.
+ let main=q('main');if(main&&Array.isArray(d.sections))d.sections.forEach(s=>{let e=q(`[data-section="${CSS.escape(s.id)}"]`);if(e){e.style.display=s.visible===false?'none':'';main.appendChild(e)}});
+ function escapeHtml(s=''){return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}function escapeAttr(s=''){return escapeHtml(s)}
+ function renderGallery(images,layout,cls){if(!images.length)return '<div class="portrait">PHOTO<br>COMING SOON</div>';let use=layout==='single'?images.slice(0,1):images;return `<div class="cmsPhotos ${cls} layout-${layout}">${use.map(im=>`<figure><img src="${escapeAttr(im.url)}" alt="${escapeAttr(im.caption||'Fresh & Ready by Dori')}">${im.caption?`<figcaption>${escapeHtml(im.caption)}</figcaption>`:''}</figure>`).join('')}</div>`}
 })();

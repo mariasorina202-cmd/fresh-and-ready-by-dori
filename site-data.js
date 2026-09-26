@@ -1,45 +1,25 @@
 window.SITE_DATA={
-  "business": {
-    "address1": "132 West Street",
-    "address2": "Boston, Lincolnshire",
-    "email": "freshandreadybydori@gmail.com",
-    "hours": {
-      "Monday": "05:00–17:00",
-      "Tuesday": "05:00–17:00",
-      "Wednesday": "05:00–17:00",
-      "Thursday": "05:00–17:00",
-      "Friday": "05:00–17:00",
-      "Saturday": "05:00–17:00",
-      "Sunday": "Closed"
-    }
-  },
-  "prices": {
-    "English Breakfast Giant Burger": "9.99",
-    "Giant Baked Donut": "3.99",
-    "Giant Chocolate Chunky Cookie": "3.99",
-    "Giant Vanilla & Caramel Cookie": "3.99",
-    "Giant Soft Pretzel": "3.49",
-    "Giant Sausage Roll": "4.49",
-    "Giant Crêpe": "3.99",
-    "Apple Pie": "3.49",
-    "Cheese Pie": "3.99",
-    "Baked Meat Langoș": "4.49",
-    "Salam de Biscuiți": "2.99",
-    "House Cake / Chec": "2.49",
-    "Amandină": "3.99",
-    "Căbănuță": "3.99",
-    "Giant Breakfast Deal": "12.99",
-    "Build Your Own Combo": "9.99",
-    "Sweet Giant Deal": "5.49",
-    "Giant Crêpe Deal": "5.99",
-    "Build Your Own": "6.99"
-  },
-  "photos": {
-    "hero": "",
-    "donut": "",
-    "burger": "",
-    "cookies": "",
-    "managingDirector": "",
-    "chef": ""
-  }
+ "version":6,
+ "business":{"address1":"132 West Street","address2":"Boston, Lincolnshire","email":"freshandreadybydori@gmail.com","hours":{"Monday":"05:00–17:00","Tuesday":"05:00–17:00","Wednesday":"05:00–17:00","Thursday":"05:00–17:00","Friday":"05:00–17:00","Saturday":"05:00–17:00","Sunday":"Closed"}},
+ "text":{
+  "announcement":"COMING SOON TO BOSTON • MONDAY–SATURDAY • FROM 5AM","heroEyebrow":"BOSTON • OPEN FROM 5AM","heroTitle":"Good Food. Brighter Days.","heroLead":"Fresh, filling food made for early mornings, busy days and people who like it their way.","heroMicro":"BIG FOOD • BUILD YOUR OWN • GREAT VALUE","menuEyebrow":"OUR MENU","menuTitle":"Big favourites. Everyday classics.","menuIntro":"From oversized Signature Giants to familiar bakery favourites and a completely customisable meal.","featuredEyebrow":"MADE TO BE NOTICED","featuredTitle":"Big food. Bold choice. Made your way.","buildEyebrow":"BUILD YOUR OWN","buildTitle":"Your breakfast. Your lunch. Your rules.","storyEyebrow":"OUR STORY","storyTitle":"Built for early mornings. Made for our community.","storyBody":"Fresh & Ready by Dori grew from something we experienced ourselves. We know what it feels like to start work very early and struggle to find fresh, filling food that you can actually make your own.\n\nSo we decided to create the place we wished had been there for us: open from 5AM, generous, flexible and welcoming.\n\nBut our purpose goes beyond the menu. We want to become part of the community we serve — a place where good food can make an ordinary day a little brighter.","manifesto":"More than food. A daily ritual.","communityEyebrow":"MORE THAN FOOD","communityTitle":"A place that gives something back.","teamEyebrow":"OUR TEAM","teamTitle":"Small team. Big purpose.","deliveryEyebrow":"DELIVERY","deliveryTitle":"Fresh & Ready, wherever your day takes you.","deliveryText":"Uber Eats and Just Eat ordering will be available here when our delivery channels go live.","allergenEyebrow":"FOOD INFORMATION","allergenTitle":"Allergies & intolerances","allergenText":"Please speak to a member of our team before ordering if you have a food allergy or intolerance. Final allergen information will be built from the exact recipes and supplier labels before opening.","findEyebrow":"FIND US","contactEyebrow":"CONTACT","contactTitle":"Say hello.","openingNote":"Opening date coming soon.","footerTagline":"Good Food. Brighter Days."},
+ "sections":[{"id":"hero","label":"Hero","visible":true},{"id":"quick","label":"Quick benefits","visible":true},{"id":"menu","label":"Menu","visible":true},{"id":"featured","label":"Featured products","visible":true},{"id":"build","label":"Build Your Own","visible":true},{"id":"story","label":"Our Story","visible":true},{"id":"manifesto","label":"Manifesto","visible":true},{"id":"community","label":"Community","visible":true},{"id":"team","label":"Our Team","visible":true},{"id":"delivery","label":"Delivery","visible":true},{"id":"allergens","label":"Allergens","visible":true},{"id":"visit","label":"Find Us","visible":true}],
+ "menu":[
+  {"id":"giants","name":"Signature Giants","description":"Intentionally oversized.","visible":true,"products":[
+   {"id":"breakfast-beast","name":"English Breakfast Giant Burger","description":"A full breakfast stacked into one giant homemade bun.","price":"9.99","visible":true},
+   {"id":"giant-donut","name":"Giant Baked Donut","description":"One glaze included. Then make it yours.","price":"3.99","visible":true},
+   {"id":"choc-cookie","name":"Giant Chocolate Chunky Cookie","description":"Chocolate chunky cookie.","price":"3.99","visible":true},
+   {"id":"vanilla-cookie","name":"Giant Vanilla & Caramel Cookie","description":"Vanilla & caramel chunky cookie.","price":"3.99","visible":true},
+   {"id":"pretzel","name":"Giant Soft Pretzel","description":"Salt, poppy, sesame or mixed seeds.","price":"3.49","visible":true},
+   {"id":"sausage-roll","name":"Giant Sausage Roll","description":"With cabanos or Polish frankfurter.","price":"4.49","visible":true},
+   {"id":"crepe","name":"Giant Crêpe","description":"Giant crêpe made your way.","price":"3.99","visible":true}]},
+  {"id":"classics","name":"Fresh & Ready Classics","description":"Comfort food, ready for the day.","visible":true,"products":[
+   {"id":"apple-pie","name":"Apple Pie","description":"","price":"3.49","visible":true},{"id":"cheese-pie","name":"Cheese Pie","description":"","price":"3.99","visible":true},{"id":"langos","name":"Baked Meat Langoș","description":"Baked, not fried.","price":"4.49","visible":true},{"id":"salam","name":"Salam de Biscuiți","description":"Generous slice.","price":"2.99","visible":true},{"id":"chec","name":"House Cake / Chec","description":"","price":"2.49","visible":true},{"id":"amandina","name":"Amandină","description":"","price":"3.99","visible":true},{"id":"cabanuta","name":"Căbănuță","description":"","price":"3.99","visible":true}]},
+  {"id":"deals","name":"Meal Deals","description":"More value, one easy order.","visible":true,"products":[{"id":"breakfast-deal","name":"Giant Breakfast Deal","description":"","price":"12.99","visible":true},{"id":"byo-combo","name":"Build Your Own Combo","description":"","price":"9.99","visible":true},{"id":"sweet-deal","name":"Sweet Giant Deal","description":"","price":"5.49","visible":true},{"id":"crepe-deal","name":"Giant Crêpe Deal","description":"","price":"5.99","visible":true}]}
+ ],
+ "buildYourOwn":{"price":"6.99","bases":["COB","BAGUETTE","PANINI","CRÊPE"],"mains":["House Beef Patty","House Chicken Patty","Sausage","Crispy Chicken","Ham"],"included":"Cheddar + fresh salad + up to 2 standard sauces included.","extras":"Egg, bacon, hash brown, extra cheese, potatoes, extra patties & more."},
+ "community":[{"title":"10% COMMUNITY DISCOUNT","text":"For NHS staff, police and fire service personnel."},{"title":"10% SUPPORT DISCOUNT","text":"Planned for eligible disabled people, older people and children in care / care-experienced young people. Final eligibility and proof requirements will be published before launch."},{"title":"COMMUNITY BOARD","text":"A free local noticeboard for appropriate opportunities in employment, education and professional development."}],
+ "team":[{"id":"managing-director","name":"Managing Director","role":"Managing Director","description":"Business, operations, customer experience and the Fresh & Ready vision.","visible":true},{"id":"chef","name":"Senior Chef & Pastry Chef","role":"Senior Chef & Pastry Chef","description":"Kitchen production, recipes, pastry and the food behind Fresh & Ready.","visible":true}],
+ "galleries":{"staff":{"label":"Staff","layout":"grid","images":[]},"products":{"label":"Products","layout":"grid","images":[]},"ourStory":{"label":"Our Story","layout":"collage","images":[]}},
+ "delivery":{"uberEnabled":false,"uberLabel":"UBER EATS • COMING SOON","uberUrl":"","justEatEnabled":false,"justEatLabel":"JUST EAT • COMING SOON","justEatUrl":""}
 };
